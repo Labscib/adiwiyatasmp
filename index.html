@@ -1,13 +1,52 @@
 <!DOCTYPE html>
-<link rel="stylesheet" href="style.css">
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Adiwiyata - Labschool</title>
+    <script src="script.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="overlay"></div>
-    <p>WORK IN PROGRESS - Dafi</p>
-    <img src="hand-paint-watercolor-artwork_1409-2668.png" alt="Placeholder image">
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="overlay"></div>
+        <img src="hand-paint-watercolor-artwork_1409-2668.png" alt="Water Background">
+
+        <div class="hero-text">
+            <h1>Konservasi Air - Pentingnya Menjaga</h1><h1 class="hero-fancy"> Sumber Daya Air</h1>
+        </div>
+    </section>
+
+    <!-- FACT SECTION -->
+    <section class="facts-section">
+
+        <div class="facts-box">
+            <h2>Fakta Menarik</h2>
+
+            <div class="fact-container">
+                <button class="arrow left" onclick="prevFact()">🢀</button>
+                <p id="fact-text"></p>
+                <button class="arrow right" onclick="nextFact()">🢂</button>
+            </div>
+
+            <img src="hand-paint-watercolor-artwork_1409-2668.png" class="fact-image">
+        </div>
+
+    </section>
+
+    <!-- CONTACT (KANAN BAWAH) -->
+    <div class="contact-info">
+        <p>📞 +62 857-1416-9994</p>
+        <p>✉ labschool@email.com</p>
+    </div>
+
+    <!-- SCHOOL INFO (KIRI BAWAH) -->
+    <div class="school-info">
+        <p>🏫 Labschool Adiwiyata</p>
+        <p>Program Peduli Lingkungan</p>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
