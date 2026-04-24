@@ -74,7 +74,9 @@ body {
     text-align: center;
     background: #f4f4f4;
 }
-
+.facts-section {
+    background-attachment: fixed;
+}
 .fact-container {
     display: flex;
     justify-content: center;
@@ -92,28 +94,6 @@ body {
     font-family: playfair display, serif;
     max-width: 500px;
     font-size: 20px;
-}
-
-/* CONTACT KANAN BAWAH */
-.contact-info {
-    position: fixed;
-    bottom: 10px;
-    right: 15px;
-    color: white;
-    background: rgba(0,0,0,0.6);
-    padding: 10px;
-    border-radius: 10px;
-}
-
-/* SCHOOL KIRI BAWAH */
-.school-info {
-    position: fixed;
-    bottom: 10px;
-    left: 15px;
-    color: white;
-    background: rgba(0,0,0,0.6);
-    padding: 10px;
-    border-radius: 10px;
 }
 .fact-container {
     position: relative;
@@ -233,4 +213,266 @@ body {
 }
 .facts-box {
     box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+}
+/* IMPACT SECTION */
+.impact-section {
+    position: relative;
+    padding: 120px 20px;
+    background: url("https://images.unsplash.com/photo-1473448912268-2022ce9509d8") center/cover no-repeat;
+}
+
+/* overlay gelap */
+.impact-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.65);
+    top: 0;
+    left: 0;
+}
+
+/* konten */
+.impact-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+}
+
+.impact-content h2 {
+    font-size: 36px;
+    margin-bottom: 50px;
+}
+
+/* grid */
+.impact-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+/* card style baru */
+.impact-card {
+    background: rgba(255, 255, 255, 0.08); /* transparan */
+    color: white;
+    padding: 40px 25px;
+    width: 260px;
+
+    border-radius: 12px;
+    text-align: left;
+
+    backdrop-filter: blur(8px); /* efek glass */
+    border: 1px solid rgba(255,255,255,0.2);
+
+    transition: all 0.3s ease;
+}
+
+/* teks */
+.impact-card p {
+    color: rgba(255,255,255,0.8);
+}
+
+/* icon besar */
+.impact-card .icon {
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+/* title */
+.impact-card h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* deskripsi */
+.impact-card p {
+    font-size: 14px;
+    color: #dcdcdc;
+}
+
+/* garis bawah (signature look) */
+.impact-card .line {
+    display: inline;
+    width: 40px;
+    height: 3px;
+    background: #00bcd4;
+    margin-top: 20px;
+
+    transition: width 0.3s ease;
+}
+
+/* hover effect */
+.impact-card:hover {
+    transform: translateY(-8px);
+}
+
+/* garis memanjang saat hover */
+.impact-card:hover .line {
+    width: 80px;
+}
+
+.footer {
+    background: #0c1f2e;
+    color: white;
+    padding: 60px 20px 20px;
+    border-top: 2px solid rgba(255,255,255,0.1);
+}
+
+/* container */
+.footer-container {
+    max-width: 1100px;
+    margin: 0 auto;
+
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+/* logo */
+.footer-logo {
+    width: 60px;
+    margin-bottom: 10px;
+}
+
+/* text */
+.footer h3 {
+    margin-bottom: 10px;
+}
+
+.footer p {
+    color: rgba(255,255,255,0.8);
+    font-size: 14px;
+}
+
+/* social icons */
+.social-icons {
+    margin-top: 15px;
+}
+
+.social-icons a {
+    width: 34px;
+    size: 34px;
+    margin-right: 10px;
+    font-size: 20px;
+    text-decoration: none;
+    color: white;
+
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* hover effect */
+.social-icons a:hover {
+    transform: scale(1.2);
+    color: #00bcd4;
+}
+
+/* bottom */
+.footer-bottom {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+}
+.footer {
+    border-top: 2px solid rgba(255,255,255,0.1);
+}
+.footer-logo {
+    width: 100%;
+    max-width: 150px;
+}
+.footer-logo {
+    transition: transform 0.3s ease;
+}
+
+.footer-logo:hover {
+    transform: scale(1.1);
+}
+/* default (belum masuk viewport) */
+/* EXPAND ON SCROLL */
+/* EXPAND ON SCROLL - FIXED VERSION */
+/* default (belum aktif / keluar viewport) */
+.expand-section {
+    width: 70%;
+    max-width: 600px;
+    margin: 120px auto;
+
+    transform: scale(0.85);
+    opacity: 0.6;
+    filter: blur(6px);
+
+    transition: all 0.6s ease;
+}
+
+/* saat masuk viewport */
+.expand-section.active {
+    width: 95%;
+    max-width: 1100px;
+
+    transform: scale(1);
+    opacity: 1;
+    filter: blur(0);
+}
+.facts-section,
+.impact-section {
+    padding: 150px 20px;
+}
+.expand-section {
+    filter: blur(4px);
+}
+
+.expand-section.active {
+    filter: blur(0);
+}
+.cta-section {
+    text-align: center;
+    padding: 100px 20px;
+    background: #0c1f2e;
+    color: white;
+}
+
+.cta-section button {
+    padding: 15px 30px;
+    border: none;
+    background: white;
+    color: #0c1f2e;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 30px;
+}
+/* default (belum masuk viewport) */
+.impact-card {
+    transform: scale(0.85);
+    opacity: 0.6;
+    filter: blur(4px);
+
+    transition: 
+        transform 0.5s ease,
+        opacity 0.5s ease,
+        filter 0.5s ease;
+}
+
+/* saat section aktif */
+.impact-content.active .impact-card {
+    transform: scale(1);
+    opacity: 1;
+    filter: blur(0);
+}
+.impact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+}
+@media (max-width: 768px) {
+    .impact-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.fact-image {
+    transition: opacity 0.4s ease, transform 0.4s ease;
 }
