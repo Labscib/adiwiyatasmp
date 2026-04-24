@@ -51,17 +51,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
-
+    
+            console.log("VISIBLE:", entry.isIntersecting); // ✅ di sini
+    
             if (entry.isIntersecting) {
                 entry.target.classList.add('active');
             } else {
                 entry.target.classList.remove('active');
             }
-
+    
         });
     }, {
-        threshold: 0.3,
-        rootMargin: "0px 0px -120px 0px"
+        threshold: 0.4
     });
 
     sections.forEach(section => observer.observe(section));
