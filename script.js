@@ -11,16 +11,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
             facts = text.split('\n').map(line => {
                 const [t, img] = line.split('|');
-                return {
-                    text: t?.trim(),
-                    image: img?.trim()
-                };
-            }).filter(f => f.text && f.image); // buang baris kosong
+                return { text: t?.trim(), image: img?.trim() };
+            }).filter(f => f.text && f.image);
 
-            showFact();
-        } catch (err) {
-            console.error("Gagal load facts:", err);
+        } catch {
+            // fallback kalau fetch gagal
+            facts = [
+                { text: "Air adalah sumber kehidupan 🌍", image: "fallback.jpg" }
+            ];
         }
+
+        showFact();
     }
 
     function showFact() {
@@ -100,4 +101,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     sections.forEach(section => observer.observe(section));
 
+});
+window.addEventListener("scroll", () => {
+    const header = document.querySelector(".site-header");
+
+    if (window.scrollY > 50) {
+        header.classList.add("scrolled");
+    } else {
+        header.classList.remove("scrolled");
+    }
 });
