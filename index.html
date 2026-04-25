@@ -2,15 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adiwiyata - Labschool</title>
     <script src="script.js" defer></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">Adiwiyata</a>
+            <nav class="main-nav">
+                <a href="index.html">Home</a>
+                <a href="feedback.html">Feedback</a>
+                <a href="adiwiyata.html">Adiwiyata</a>
+                <a href="games.html">Games</a>
+                <a href="info.html">Website Info</a>
+            </nav>
+        </div>
+    </header>
 
-</section>
     <!-- HERO -->
-    <section class="hero">
+    <section class="hero" id="home">
         <div class="overlay"></div>
         <img src="https://blogs.worldbank.org/content/dam/sites/blogs/img/detail/mgr/water_supply.jpeg" alt="Water Background">
 
@@ -25,13 +37,15 @@
         <div class="facts-box expand-section">
             <h2>Fakta Menarik</h2>
 
-            <div class="fact-container">
-                <button class="arrow left" onclick="prevFact()">🢀</button>
-                <p id="fact-text"></p>
-                <button class="arrow right" onclick="nextFact()">🢂</button>
-            </div>
+            <div class="fact-layout">
+                <div class="fact-container">
+                    <button class="arrow left" onclick="prevFact()"><</button>
+                    <p id="fact-text"></p>
+                    <button class="arrow right" onclick="nextFact()">></button>
+                </div>
 
-            <img id="fact-image" src="https://static.wixstatic.com/media/4f090a_58e3b40b8678485b8505b1ed4048096b~mv2.jpg/v1/fill/w_980,h_653,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/4f090a_58e3b40b8678485b8505b1ed4048096b~mv2.jpg" class="fact-image">
+                <img id="fact-image" src="https://static.wixstatic.com/media/4f090a_58e3b40b8678485b8505b1ed4048096b~mv2.jpg/v1/fill/w_980,h_653,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/4f090a_58e3b40b8678485b8505b1ed4048096b~mv2.jpg" class="fact-image">
+            </div>
         </div>
 
     </section>

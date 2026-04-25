@@ -33,6 +33,38 @@ document.addEventListener("DOMContentLoaded", () => {
         factImage.src = facts[currentFact].image;
     }
 
+    async function loadUpdates() {
+        const updatesContainer = document.getElementById("updates-list");
+        if (!updatesContainer) return;
+
+        try {
+            const res = await fetch('updates.txt');
+            const text = await res.text();
+
+            const lines = text
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+
+            if (lines.length === 0) {
+                updatesContainer.innerHTML = '<li>Tidak ada update terbaru.</li>';
+                return;
+            }
+
+            updatesContainer.innerHTML = lines.map(line => {
+                const parts = line.split('|').map(part => part.trim());
+                const title = parts[0] || 'Update';
+                const date = parts[1] || 'Tanggal tidak tersedia';
+                const description = parts[2] || 'Deskripsi update tidak tersedia.';
+
+                return `<li><div><strong>${title}</strong><span class="update-date">${date}</span></div><div>${description}</div></li>`;
+            }).join('');
+        } catch (err) {
+            console.error('Gagal load updates:', err);
+            updatesContainer.innerHTML = '<li>Gagal memuat data update.</li>';
+        }
+    }
+
     // tombol global (biar bisa dipanggil dari HTML)
     window.nextFact = function () {
         currentFact = (currentFact + 1) % facts.length;
@@ -45,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     loadFacts();
+    loadUpdates();
 
     // ===== SCROLL EFFECT =====
     const sections = document.querySelectorAll('.expand-section');
