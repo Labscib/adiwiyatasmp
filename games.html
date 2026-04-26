@@ -21,16 +21,248 @@
         </div>
     </header>
 
+    <!-- GAMES MENU -->
     <section class="facts-section">
         <div class="facts-box expand-section">
-            <h2>Games Edukasi (COMING SOON)</h2>
-            <p>Latih pengetahuan tentang air dan lingkungan dengan permainan sederhana berikut:</p>
-            <ul>
-                <li>✔️ Tebak Fakta Air</li>
-                <li>✔️ Kuis Hemat Air</li>
-                <li>✔️ Pilih Tindakan Ramah Lingkungan</li>
-            </ul>
-            <p>Game ini dirancang untuk mengenalkan konsep konservasi air dan kebersihan secara menyenangkan.</p>
+            <h2>Games Edukasi</h2>
+            <p>Pilih permainan yang ingin kamu mainkan:</p>
+            <div class="games-menu">
+                <button class="game-btn" onclick="startQuiz()">
+                    <span class="game-icon">🌊</span>
+                    <span class="game-title">Tebak Fakta Air</span>
+                    <span class="game-desc">Tebak apakah pernyataan tentang air benar atau salah</span>
+                </button>
+                <button class="game-btn" onclick="startWaterSimulation()">
+                    <span class="game-icon">🚿</span>
+                    <span class="game-title">Simulasi Hemat Air</span>
+                    <span class="game-desc">Simulasi kehidupan siswa dan pengambilan keputusan hemat air</span>
+                </button>
+                <button class="game-btn" onclick="startStoryGame()">
+                    <span class="game-icon">🌍</span>
+                    <span class="game-title">Cerita Ramah Lingkungan</span>
+                    <span class="game-desc">Ikuti cerita dan ambil keputusan untuk menyelamatkan lingkungan</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUIZ SECTION -->
+    <section class="quiz-section" id="quizSection" style="display: none;">
+        <div class="quiz-container">
+            <div id="quizView">
+                <div class="quiz-header">
+                    <h2>Tebak Fakta Air ✨</h2>
+                    <div class="quiz-progress">
+                        <span id="currentQuestion">1</span> / <span id="totalQuestions">10</span>
+                    </div>
+                </div>
+
+                <div class="quiz-content">
+                    <div class="question-box">
+                        <p id="questionText" class="question-text"></p>
+                    </div>
+
+                    <div class="answer-buttons">
+                        <button class="answer-btn benar-btn" onclick="checkAnswer(true)">
+                            <span class="icon">✓</span>
+                            <span class="text">BENAR</span>
+                        </button>
+                        <button class="answer-btn salah-btn" onclick="checkAnswer(false)">
+                            <span class="icon">✗</span>
+                            <span class="text">SALAH</span>
+                        </button>
+                    </div>
+
+                    <div id="feedbackBox" class="feedback-box" style="display: none;">
+                        <p id="feedbackText"></p>
+                    </div>
+                </div>
+
+                <div class="quiz-footer">
+                    <button class="next-btn" id="nextBtn" onclick="nextQuestion()" style="display: none;">Lanjut →</button>
+                    <button class="finish-btn" id="finishBtn" onclick="finishQuiz()" style="display: none;">Selesai</button>
+                    <button class="back-btn" onclick="backToMenu()">← Kembali ke Menu</button>
+                </div>
+            </div>
+
+            <div id="resultView" style="display: none;">
+                <div class="result-box">
+                    <h3>🎉 Hasil Quiz Kamu!</h3>
+                    <div class="score-display">
+                        <div class="score-circle">
+                            <span id="scoreText" class="score">0/10</span>
+                        </div>
+                        <p id="scoreMessage" class="score-message"></p>
+                        <p id="scorePercentage" class="score-percentage"></p>
+                    </div>
+                    <div class="result-actions">
+                        <button class="replay-btn" onclick="startQuiz()">🔄 Mainkan Lagi</button>
+                        <button class="back-btn" onclick="backToMenu()">← Kembali ke Menu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STORY GAME SECTION -->
+    <section class="story-section" id="storySection" style="display: none;">
+        <div class="story-container">
+            <div id="levelSelectView">
+                <div class="story-header">
+                    <h2>Pilih Level Cerita 🌍</h2>
+                    <p>Pilih skenario masalah lingkungan yang ingin kamu hadapi:</p>
+                </div>
+
+                <div class="level-menu">
+                    <button class="level-btn" onclick="selectLevel('factory')">
+                        <span class="level-icon">🏭</span>
+                        <span class="level-title">Pabrik</span>
+                        <span class="level-desc">Polusi limbah industri ke sungai</span>
+                    </button>
+                    <button class="level-btn" onclick="selectLevel('home')">
+                        <span class="level-icon">🏠</span>
+                        <span class="level-title">Rumah Tangga</span>
+                        <span class="level-desc">Sampah plastik dan limbah rumah</span>
+                    </button>
+                    <button class="level-btn" onclick="selectLevel('public')">
+                        <span class="level-icon">🏙️</span>
+                        <span class="level-title">Tempat Umum</span>
+                        <span class="level-desc">Sampah di jalan dan taman kota</span>
+                    </button>
+                    <button class="level-btn" onclick="selectLevel('school')">
+                        <span class="level-icon">🏫</span>
+                        <span class="level-title">Sekolah</span>
+                        <span class="level-desc">Pengelolaan sampah di lingkungan sekolah</span>
+                    </button>
+                </div>
+
+                <div class="story-footer">
+                    <button class="back-btn" onclick="backToMenu()">← Kembali ke Menu</button>
+                </div>
+            </div>
+
+            <div id="storyView" style="display: none;">
+                <div class="story-header">
+                    <h2>Cerita Ramah Lingkungan 🌍</h2>
+                </div>
+
+                <div class="story-content">
+                    <div class="story-image">
+                        <img id="storyImage" src="" alt="Story Visual">
+                    </div>
+                    <div class="story-text">
+                        <p id="storyText"></p>
+                    </div>
+                    <div class="story-choices" id="storyChoices">
+                        <!-- Choices will be populated by JS -->
+                    </div>
+                </div>
+
+                <div class="story-footer">
+                    <button class="back-btn" onclick="backToMenu()">← Kembali ke Menu</button>
+                </div>
+            </div>
+
+            <div id="storyEndView" style="display: none;">
+                <div class="story-end-box">
+                    <h3 id="storyEndTitle">Akhir Cerita</h3>
+                    <div class="story-end-content">
+                        <img id="storyEndImage" src="" alt="End Visual">
+                        <p id="storyEndText"></p>
+                    </div>
+                    <div class="story-end-actions">
+                        <button class="replay-btn" onclick="startStoryGame()">🔄 Mainkan Lagi</button>
+                        <button class="back-btn" onclick="backToMenu()">← Kembali ke Menu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WATER SIMULATION SECTION -->
+    <section class="simulation-section" id="simulationSection" style="display: none;">
+        <div class="simulation-container">
+            <div id="simulationView">
+                <div class="simulation-header">
+                    <h2>Simulasi Hemat Air Siswa 🚿</h2>
+                    <div class="day-progress">
+                        <span>Hari: <span id="currentDay">1</span>/3</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="dayProgress"></div>
+                        </div>
+                    </div>
+                    <div class="water-meter">
+                        <span>Air Digunakan: <span id="waterUsed">0</span> Liter</span>
+                    </div>
+                </div>
+
+                <div class="simulation-content">
+                    <div class="house-scene">
+                        <div class="room bathroom">
+                            <h3>Kamar Mandi</h3>
+                            <div class="interactive-item" id="shower" onclick="interactWithItem('shower')">
+                                <span class="item-icon">🚿</span>
+                                <span class="item-label">Shower</span>
+                            </div>
+                            <div class="interactive-item" id="sink" onclick="interactWithItem('sink')">
+                                <span class="item-icon">🪠</span>
+                                <span class="item-label">Wastafel</span>
+                            </div>
+                        </div>
+                        <div class="room kitchen">
+                            <h3>Dapur</h3>
+                            <div class="interactive-item" id="faucet" onclick="interactWithItem('faucet')">
+                                <span class="item-icon">🚰</span>
+                                <span class="item-label">Keran</span>
+                            </div>
+                        </div>
+                        <div class="room toilet-room">
+                            <h3>Toilet</h3>
+                            <div class="interactive-item" id="toilet" onclick="interactWithItem('toilet')">
+                                <span class="item-icon">🚽</span>
+                                <span class="item-label">Toilet</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-panel">
+                        <h3>Aktivitas Hari Ini</h3>
+                        <div id="activityList">
+                            <!-- Activities will be populated by JS -->
+                        </div>
+                        <button class="next-day-btn" id="nextDayBtn" onclick="nextDay()" style="display: none;">Hari Berikutnya →</button>
+                    </div>
+                </div>
+
+                <div class="simulation-footer">
+                    <button class="back-btn" onclick="backToMenu()">← Kembali ke Menu</button>
+                </div>
+            </div>
+
+            <div id="simulationEndView" style="display: none;">
+                <div class="simulation-end-box">
+                    <h3 id="simulationEndTitle">Hasil Simulasi</h3>
+                    <div class="simulation-results">
+                        <div class="result-stat">
+                            <span class="stat-label">Total Air Digunakan:</span>
+                            <span class="stat-value" id="totalWater">0 Liter</span>
+                        </div>
+                        <div class="result-stat">
+                            <span class="stat-label">Rata-rata per Hari:</span>
+                            <span class="stat-value" id="avgWater">0 Liter</span>
+                        </div>
+                        <div class="result-stat">
+                            <span class="stat-label">Keputusan Hemat:</span>
+                            <span class="stat-value" id="waterGrade">C</span>
+                        </div>
+                        <p id="simulationFeedback"></p>
+                    </div>
+                    <div class="simulation-end-actions">
+                        <button class="replay-btn" onclick="startWaterSimulation()">🔄 Mainkan Lagi</button>
+                        <button class="back-btn" onclick="backToMenu()">← Kembali ke Menu</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
