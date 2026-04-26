@@ -4,6 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let facts = [];
     let currentFact = 0;
     let feedbackEntries = [];
+    let githubConfig = {
+        token: '',
+        owner: '',
+        repo: ''
+    };
 
     async function loadFacts() {
         try {
@@ -78,45 +83,157 @@ document.addEventListener("DOMContentLoaded", () => {
         showFact();
     };
 
+    // ===== GITHUB CONFIG =====
+    function loadGithubConfig() {
+        const stored = localStorage.getItem('adiwiyataGithubConfig');
+        if (stored) {
+            try {
+                githubConfig = JSON.parse(stored);
+            } catch (err) {
+                console.warn('Gagal membaca GitHub config:', err);
+            }
+        }
+
+        const tokenInput = document.getElementById('github-token');
+        const ownerInput = document.getElementById('github-owner');
+        const repoInput = document.getElementById('github-repo');
+
+        if (tokenInput) tokenInput.value = githubConfig.token;
+        if (ownerInput) ownerInput.value = githubConfig.owner;
+        if (repoInput) repoInput.value = githubConfig.repo;
+    }
+
+    function saveGithubConfig() {
+        const tokenInput = document.getElementById('github-token');
+        const ownerInput = document.getElementById('github-owner');
+        const repoInput = document.getElementById('github-repo');
+        const statusDiv = document.getElementById('github-status');
+
+        const token = tokenInput?.value.trim() || '';
+        const owner = ownerInput?.value.trim() || '';
+        const repo = repoInput?.value.trim() || '';
+
+        if (!token || !owner || !repo) {
+            if (statusDiv) statusDiv.innerHTML = '<span style="color: #FFB3B3;">Semua field wajib diisi.</span>';
+            return;
+        }
+
+        githubConfig = { token, owner, repo };
+        localStorage.setItem('adiwiyataGithubConfig', JSON.stringify(githubConfig));
+
+        if (statusDiv) statusDiv.innerHTML = '<span style="color: #B2FFCC;">✓ Konfigurasi GitHub berhasil disimpan!</span>';
+    }
+
+    async function getGithubFileSHA() {
+        if (!githubConfig.token || !githubConfig.owner || !githubConfig.repo) return null;
+
+        try {
+            const url = `https://api.github.com/repos/${githubConfig.owner}/${githubConfig.repo}/contents/feedback.txt`;
+            const res = await fetch(url, {
+                headers: {
+                    'Authorization': `token ${githubConfig.token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                return data.sha;
+            }
+            return null;
+        } catch (err) {
+            console.warn('Gagal mengambil SHA dari GitHub:', err);
+            return null;
+        }
+    }
+
+    async function updateGithubFile(content) {
+        if (!githubConfig.token || !githubConfig.owner || !githubConfig.repo) return false;
+
+        try {
+            const sha = await getGithubFileSHA();
+            const url = `https://api.github.com/repos/${githubConfig.owner}/${githubConfig.repo}/contents/feedback.txt`;
+            const base64Content = btoa(unescape(encodeURIComponent(content)));
+
+            const res = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${githubConfig.token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                },
+                body: JSON.stringify({
+                    message: `Update feedback - ${new Date().toLocaleString('id-ID')}`,
+                    content: base64Content,
+                    ...(sha && { sha })
+                })
+            });
+
+            return res.ok;
+        } catch (err) {
+            console.error('Gagal update file di GitHub:', err);
+            return false;
+        }
+    }
+
     async function loadFeedbackEntries() {
         const feedbackList = document.getElementById('feedback-list');
         if (!feedbackList) return;
 
-        let localEntries = [];
-        const localJson = localStorage.getItem('adiwiyataFeedbackEntries');
-        if (localJson) {
+        let fileEntries = [];
+
+        // Coba load dari GitHub terlebih dahulu
+        if (githubConfig.token && githubConfig.owner && githubConfig.repo) {
             try {
-                localEntries = JSON.parse(localJson);
+                const url = `https://api.github.com/repos/${githubConfig.owner}/${githubConfig.repo}/contents/feedback.txt`;
+                const res = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${githubConfig.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    const content = atob(data.content);
+                    fileEntries = parseFileContent(content);
+                    feedbackEntries = fileEntries;
+                    renderFeedbackEntries();
+                    return;
+                }
             } catch (err) {
-                console.warn('Gagal membaca feedback lokal:', err);
+                console.warn('Gagal load dari GitHub, coba file lokal:', err);
             }
         }
 
-        let fileEntries = [];
+        // Fallback ke file lokal
         try {
             const res = await fetch('feedback.txt');
             if (res.ok) {
                 const text = await res.text();
-                fileEntries = text
-                    .split('\n')
-                    .map(line => line.trim())
-                    .filter(line => line.length > 0)
-                    .map(line => {
-                        const [name, rating, message] = line.split('|');
-                        return {
-                            name: name?.trim() || 'Anonim',
-                            rating: rating?.trim() || '0',
-                            message: message?.trim() || ''
-                        };
-                    })
-                    .filter(entry => entry.name && entry.message);
+                fileEntries = parseFileContent(text);
             }
         } catch (err) {
             console.warn('Tidak dapat memuat feedback.txt:', err);
         }
 
-        feedbackEntries = [...localEntries, ...fileEntries];
+        feedbackEntries = fileEntries;
         renderFeedbackEntries();
+    }
+
+    function parseFileContent(content) {
+        return content
+            .split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0)
+            .map(line => {
+                const [name, rating, message] = line.split('|');
+                return {
+                    name: name?.trim() || 'Anonim',
+                    rating: rating?.trim() || '0',
+                    message: message?.trim() || ''
+                };
+            })
+            .filter(entry => entry.name && entry.message);
     }
 
     function escapeHtml(value) {
@@ -148,10 +265,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }).join('');
     }
 
-    function saveFeedbackEntriesToLocal() {
-        localStorage.setItem('adiwiyataFeedbackEntries', JSON.stringify(feedbackEntries));
-    }
-
     function showFeedbackStatus(message, isSuccess = true) {
         const feedbackStatus = document.getElementById('feedback-status');
         if (!feedbackStatus) return;
@@ -178,59 +291,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const entry = { name, rating, message };
         feedbackEntries.unshift(entry);
-        saveFeedbackEntriesToLocal();
         renderFeedbackEntries();
 
         event.target.reset();
-        showFeedbackStatus('Terima kasih! Feedback Anda berhasil ditambahkan.');
-    }
 
-    async function downloadFeedbackFile() {
-        const content = feedbackEntries
-            .map(entry => `${entry.name}|${entry.rating}|${entry.message}`)
-            .join('\n') + '\n';
+        // Coba simpan ke GitHub
+        if (githubConfig.token && githubConfig.owner && githubConfig.repo) {
+            const content = feedbackEntries
+                .map(e => `${e.name}|${e.rating}|${e.message}`)
+                .join('\n') + '\n';
 
-        if (window.showSaveFilePicker) {
-            try {
-                const handle = await window.showSaveFilePicker({
-                    suggestedName: 'feedback.txt',
-                    types: [{ description: 'Text File', accept: { 'text/plain': ['.txt'] } }]
-                });
-                const writable = await handle.createWritable();
-                await writable.write(content);
-                await writable.close();
-                showFeedbackStatus('Feedback berhasil disimpan ke feedback.txt.');
-                return;
-            } catch (err) {
-                console.warn('Gagal menyimpan file via File System Access API:', err);
-            }
+            updateGithubFile(content).then(success => {
+                if (success) {
+                    showFeedbackStatus('✓ Feedback berhasil disimpan ke GitHub!');
+                } else {
+                    showFeedbackStatus('⚠ Feedback ditambahkan lokal, tapi gagal ke GitHub. Periksa token.', false);
+                }
+            }).catch(err => {
+                console.error('Error saat save ke GitHub:', err);
+                showFeedbackStatus('⚠ Feedback ditambahkan lokal. Gagal koneksi GitHub.', false);
+            });
+        } else {
+            showFeedbackStatus('ℹ Feedback ditambahkan. Atur GitHub untuk auto-save.', true);
         }
-
-        const blob = new Blob([content], { type: 'text/plain' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'feedback.txt';
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        URL.revokeObjectURL(link.href);
-
-        showFeedbackStatus('File feedback.txt siap diunduh. Simpan file tersebut di komputer Anda.');
     }
 
     loadFacts();
     loadUpdates();
+    loadGithubConfig();
     loadFeedbackEntries();
 
     const feedbackForm = document.getElementById('feedback-form');
-    const saveFeedbackBtn = document.getElementById('save-feedback-file');
+    const githubSaveConfigBtn = document.getElementById('github-save-config');
 
     if (feedbackForm) {
         feedbackForm.addEventListener('submit', handleFeedbackFormSubmit);
     }
 
-    if (saveFeedbackBtn) {
-        saveFeedbackBtn.addEventListener('click', downloadFeedbackFile);
+    if (githubSaveConfigBtn) {
+        githubSaveConfigBtn.addEventListener('click', saveGithubConfig);
     }
 
     // ===== SCROLL EFFECT =====

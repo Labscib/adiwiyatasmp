@@ -47,15 +47,25 @@
                 <button type="submit">Kirim Feedback</button>
                 <div id="feedback-status" class="feedback-status"></div>
             </form>
-            <div class="feedback-actions">
-                <button id="save-feedback-file" type="button">Simpan ke feedback.txt</button>
-                <span class="feedback-note">Jika browser tidak dapat menulis file otomatis, simpan menggunakan tombol ini.</span>
-            </div>
             <div id="feedback-display" class="feedback-display">
                 <h3>Feedback dari pengguna</h3>
                 <div id="feedback-list" class="feedback-list">
                     <p class="feedback-empty">Memuat feedback...</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="github-section">
+        <div class="github-config-box">
+            <h3>GitHub Auto-Save</h3>
+            <p>Atur konfigurasi GitHub agar feedback otomatis tersimpan di repository Anda.</p>
+            <div class="github-inputs">
+                <input type="text" id="github-token" placeholder="GitHub Personal Access Token">
+                <input type="text" id="github-owner" placeholder="Username GitHub">
+                <input type="text" id="github-repo" placeholder="Nama repository">
+                <button type="button" id="github-save-config">Simpan Konfigurasi</button>
+                <div id="github-status" class="github-status"></div>
             </div>
         </div>
     </section>
