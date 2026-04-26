@@ -1,3 +1,4 @@
 1.0 | 2026-04-24 | Peluncuran awal website Adiwiyata
 1.1 | 2026-04-25 | Penambahan menu navigasi dan bugfixes[Layout shift, Mobile layout]
 1.2 | 2026-04-26 | Update games[Fakta air, Kuis hemat air, Ramah lingkungan] dan bugfix[Mobile layout]
+1.3 | 2026-04-26 | Menambahkan fitur feedback dan forum feedback
