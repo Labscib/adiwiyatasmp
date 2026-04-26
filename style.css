@@ -236,6 +236,8 @@ img {
 
 .showroom {
     min-height: 320px;
+    max-height: 560px;
+    overflow-y: auto;
 }
 
 .feedback-item {
