@@ -23,13 +23,40 @@
 
     <section class="facts-section">
         <div class="facts-box expand-section">
-            <h2>Feedback (COMING SOON)</h2>
-            <p>Terima kasih telah membantu kami menjadi lebih baik. Silakan kirim saran, kritik, atau pertanyaan melalui kontak di bawah ini.</p>
-            <ul>
-                <li>📧 Email: example@example.com</li>
-                <li>📱 WhatsApp: +62 %%%-%%%%-%%%%</li>
-                <li>✍️ Saran: Gunakan kolom di formulir ini untuk berbagi ide Anda.</li>
-            </ul>
+            <h2>Feedback</h2>
+            <p>Bagikan nama, rating, dan pendapat Anda. Semua feedback akan ditampilkan di bawah agar pengunjung lain bisa melihat siapa yang memberi dan bagaimana tanggapannya.</p>
+            <form id="feedback-form" class="feedback-form">
+                <label>
+                    Nama
+                    <input type="text" id="feedback-name" placeholder="Nama Anda" required>
+                </label>
+                <label>
+                    Feedback
+                    <textarea id="feedback-message" placeholder="Tulis feedback Anda di sini" required></textarea>
+                </label>
+                <label>
+                    Rating
+                    <select id="feedback-rating">
+                        <option value="5">5 - Sangat Baik</option>
+                        <option value="4">4 - Baik</option>
+                        <option value="3">3 - Cukup</option>
+                        <option value="2">2 - Kurang</option>
+                        <option value="1">1 - Buruk</option>
+                    </select>
+                </label>
+                <button type="submit">Kirim Feedback</button>
+                <div id="feedback-status" class="feedback-status"></div>
+            </form>
+            <div class="feedback-actions">
+                <button id="save-feedback-file" type="button">Simpan ke feedback.txt</button>
+                <span class="feedback-note">Jika browser tidak dapat menulis file otomatis, simpan menggunakan tombol ini.</span>
+            </div>
+            <div id="feedback-display" class="feedback-display">
+                <h3>Feedback dari pengguna</h3>
+                <div id="feedback-list" class="feedback-list">
+                    <p class="feedback-empty">Memuat feedback...</p>
+                </div>
+            </div>
         </div>
     </section>
 

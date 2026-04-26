@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // ===== LOAD FACTS FROM TXT =====
     let facts = [];
     let currentFact = 0;
+    let feedbackEntries = [];
 
     async function loadFacts() {
         try {
@@ -77,8 +78,160 @@ document.addEventListener("DOMContentLoaded", () => {
         showFact();
     };
 
+    async function loadFeedbackEntries() {
+        const feedbackList = document.getElementById('feedback-list');
+        if (!feedbackList) return;
+
+        let localEntries = [];
+        const localJson = localStorage.getItem('adiwiyataFeedbackEntries');
+        if (localJson) {
+            try {
+                localEntries = JSON.parse(localJson);
+            } catch (err) {
+                console.warn('Gagal membaca feedback lokal:', err);
+            }
+        }
+
+        let fileEntries = [];
+        try {
+            const res = await fetch('feedback.txt');
+            if (res.ok) {
+                const text = await res.text();
+                fileEntries = text
+                    .split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line.length > 0)
+                    .map(line => {
+                        const [name, rating, message] = line.split('|');
+                        return {
+                            name: name?.trim() || 'Anonim',
+                            rating: rating?.trim() || '0',
+                            message: message?.trim() || ''
+                        };
+                    })
+                    .filter(entry => entry.name && entry.message);
+            }
+        } catch (err) {
+            console.warn('Tidak dapat memuat feedback.txt:', err);
+        }
+
+        feedbackEntries = [...localEntries, ...fileEntries];
+        renderFeedbackEntries();
+    }
+
+    function escapeHtml(value) {
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function renderFeedbackEntries() {
+        const feedbackList = document.getElementById('feedback-list');
+        if (!feedbackList) return;
+
+        if (feedbackEntries.length === 0) {
+            feedbackList.innerHTML = '<p class="feedback-empty">Belum ada feedback. Jadilah yang pertama mengirimkan.</p>';
+            return;
+        }
+
+        feedbackList.innerHTML = feedbackEntries.map(entry => {
+            return `
+                <article class="feedback-item">
+                    <div class="feedback-name">${escapeHtml(entry.name)}</div>
+                    <div class="feedback-rating">Rating: ${escapeHtml(entry.rating)} / 5</div>
+                    <p class="feedback-message">${escapeHtml(entry.message)}</p>
+                </article>
+            `;
+        }).join('');
+    }
+
+    function saveFeedbackEntriesToLocal() {
+        localStorage.setItem('adiwiyataFeedbackEntries', JSON.stringify(feedbackEntries));
+    }
+
+    function showFeedbackStatus(message, isSuccess = true) {
+        const feedbackStatus = document.getElementById('feedback-status');
+        if (!feedbackStatus) return;
+        feedbackStatus.textContent = message;
+        feedbackStatus.style.color = isSuccess ? '#B2FFCC' : '#FFB3B3';
+    }
+
+    function handleFeedbackFormSubmit(event) {
+        event.preventDefault();
+        const nameInput = document.getElementById('feedback-name');
+        const messageInput = document.getElementById('feedback-message');
+        const ratingSelect = document.getElementById('feedback-rating');
+
+        if (!nameInput || !messageInput || !ratingSelect) return;
+
+        const name = nameInput.value.trim();
+        const message = messageInput.value.trim();
+        const rating = ratingSelect.value;
+
+        if (!name || !message) {
+            showFeedbackStatus('Nama dan feedback wajib diisi.', false);
+            return;
+        }
+
+        const entry = { name, rating, message };
+        feedbackEntries.unshift(entry);
+        saveFeedbackEntriesToLocal();
+        renderFeedbackEntries();
+
+        event.target.reset();
+        showFeedbackStatus('Terima kasih! Feedback Anda berhasil ditambahkan.');
+    }
+
+    async function downloadFeedbackFile() {
+        const content = feedbackEntries
+            .map(entry => `${entry.name}|${entry.rating}|${entry.message}`)
+            .join('\n') + '\n';
+
+        if (window.showSaveFilePicker) {
+            try {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: 'feedback.txt',
+                    types: [{ description: 'Text File', accept: { 'text/plain': ['.txt'] } }]
+                });
+                const writable = await handle.createWritable();
+                await writable.write(content);
+                await writable.close();
+                showFeedbackStatus('Feedback berhasil disimpan ke feedback.txt.');
+                return;
+            } catch (err) {
+                console.warn('Gagal menyimpan file via File System Access API:', err);
+            }
+        }
+
+        const blob = new Blob([content], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'feedback.txt';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(link.href);
+
+        showFeedbackStatus('File feedback.txt siap diunduh. Simpan file tersebut di komputer Anda.');
+    }
+
     loadFacts();
     loadUpdates();
+    loadFeedbackEntries();
+
+    const feedbackForm = document.getElementById('feedback-form');
+    const saveFeedbackBtn = document.getElementById('save-feedback-file');
+
+    if (feedbackForm) {
+        feedbackForm.addEventListener('submit', handleFeedbackFormSubmit);
+    }
+
+    if (saveFeedbackBtn) {
+        saveFeedbackBtn.addEventListener('click', downloadFeedbackFile);
+    }
 
     // ===== SCROLL EFFECT =====
     const sections = document.querySelectorAll('.expand-section');
