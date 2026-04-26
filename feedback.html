@@ -57,7 +57,19 @@
     </section>
 
     <section class="github-section">
-        <div class="github-config-box">
+        <div class="github-auth-container" id="github-auth-container">
+            <div class="github-login-box">
+                <h3>🔐 Akses GitHub Config</h3>
+                <p>Masukkan secret code untuk mengakses konfigurasi GitHub.</p>
+                <div class="auth-inputs">
+                    <input type="password" id="secret-code" placeholder="Masukkan secret code" autocomplete="off">
+                    <button type="button" id="auth-btn">Masuk</button>
+                    <div id="auth-status" class="auth-status"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="github-config-box" id="github-config-container" style="display: none;">
             <h3>GitHub Auto-Save</h3>
             <p>Atur konfigurasi GitHub agar feedback otomatis tersimpan di repository Anda.</p>
             <div class="github-inputs">
@@ -67,6 +79,7 @@
                 <button type="button" id="github-save-config">Simpan Konfigurasi</button>
                 <div id="github-status" class="github-status"></div>
             </div>
+            <button type="button" id="logout-btn" class="logout-btn">Logout</button>
         </div>
     </section>
 

@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 document.addEventListener("DOMContentLoaded", () => {
 
     // ===== LOAD FACTS FROM TXT =====
@@ -83,8 +85,72 @@ document.addEventListener("DOMContentLoaded", () => {
         showFact();
     };
 
+    // ===== GITHUB AUTH =====
+    const SECRET_CODE = 'admin123'; // Ganti dengan secret code yang lebih aman
+    let isGithubAuthenticated = false;
+
+    function checkGithubAuthStatus() {
+        const authStatus = localStorage.getItem('adiwiyataGithubAuth');
+        if (authStatus === 'true') {
+            isGithubAuthenticated = true;
+            showGithubConfigForm();
+        } else {
+            isGithubAuthenticated = false;
+            showGithubLoginForm();
+        }
+    }
+
+    function showGithubLoginForm() {
+        const authContainer = document.getElementById('github-auth-container');
+        const configContainer = document.getElementById('github-config-container');
+        
+        if (authContainer) authContainer.style.display = 'flex';
+        if (configContainer) configContainer.style.display = 'none';
+        isGithubAuthenticated = false;
+    }
+
+    function showGithubConfigForm() {
+        const authContainer = document.getElementById('github-auth-container');
+        const configContainer = document.getElementById('github-config-container');
+        
+        if (authContainer) authContainer.style.display = 'none';
+        if (configContainer) configContainer.style.display = 'block';
+        isGithubAuthenticated = true;
+    }
+
+    function handleAuthSubmit() {
+        const secretCodeInput = document.getElementById('secret-code');
+        const authStatusDiv = document.getElementById('auth-status');
+        const secretCode = secretCodeInput?.value.trim() || '';
+
+        if (!secretCode) {
+            if (authStatusDiv) authStatusDiv.innerHTML = '<span style="color: #FFB3B3;">Masukkan secret code.</span>';
+            return;
+        }
+
+        if (secretCode === SECRET_CODE) {
+            localStorage.setItem('adiwiyataGithubAuth', 'true');
+            if (authStatusDiv) authStatusDiv.innerHTML = '<span style="color: #B2FFCC;">✓ Berhasil masuk!</span>';
+            setTimeout(() => {
+                checkGithubAuthStatus();
+                loadGithubConfig();
+            }, 500);
+        } else {
+            if (authStatusDiv) authStatusDiv.innerHTML = '<span style="color: #FFB3B3;">❌ Secret code salah!</span>';
+            if (secretCodeInput) secretCodeInput.value = '';
+        }
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('adiwiyataGithubAuth');
+        isGithubAuthenticated = false;
+        checkGithubAuthStatus();
+    }
+
     // ===== GITHUB CONFIG =====
     function loadGithubConfig() {
+        if (!isGithubAuthenticated) return;
+
         const stored = localStorage.getItem('adiwiyataGithubConfig');
         if (stored) {
             try {
@@ -318,11 +384,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     loadFacts();
     loadUpdates();
-    loadGithubConfig();
+    checkGithubAuthStatus();
     loadFeedbackEntries();
 
     const feedbackForm = document.getElementById('feedback-form');
     const githubSaveConfigBtn = document.getElementById('github-save-config');
+    const authBtn = document.getElementById('auth-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const secretCodeInput = document.getElementById('secret-code');
 
     if (feedbackForm) {
         feedbackForm.addEventListener('submit', handleFeedbackFormSubmit);
@@ -330,6 +399,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (githubSaveConfigBtn) {
         githubSaveConfigBtn.addEventListener('click', saveGithubConfig);
+    }
+
+    if (authBtn) {
+        authBtn.addEventListener('click', handleAuthSubmit);
+    }
+
+    if (secretCodeInput) {
+        secretCodeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleAuthSubmit();
+        });
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleLogout);
     }
 
     // ===== SCROLL EFFECT =====
