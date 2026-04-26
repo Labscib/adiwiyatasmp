@@ -1375,6 +1375,7 @@ img {
 }
 
 .footer-logo {
+    display: inline-flex;
     width: 100%;
     max-width: 150px;
     margin-bottom: 10px;
